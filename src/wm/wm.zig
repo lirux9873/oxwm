@@ -264,6 +264,7 @@ pub const WindowManager = struct {
     pub fn setupBars(self: *WindowManager) void {
         var current_monitor = self.monitors;
         var last_bar: ?*Bar = null;
+        var is_first_bar = true;
 
         while (current_monitor) |monitor| {
             const bar = Bar.create(
@@ -272,10 +273,12 @@ pub const WindowManager = struct {
                 self.display.screen,
                 monitor,
                 self.config,
+                is_first_bar,
             ) orelse {
                 current_monitor = monitor.next;
                 continue;
             };
+            is_first_bar = false;
 
             if (tiling.bar_height == 0) {
                 tiling.setBarHeight(bar.height);
@@ -325,6 +328,10 @@ pub const WindowManager = struct {
 
     pub fn windowToBar(self: *WindowManager, win: xlib.Window) ?*Bar {
         return bar_mod.windowToBar(self.bars, win);
+    }
+
+    pub fn getSystray(self: *WindowManager) ?*bar_mod.Systray {
+        return bar_mod.getSystray(self.bars);
     }
 
     /// Refreshes the cached numlock modifier bitmask from the X server's

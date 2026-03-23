@@ -33,12 +33,19 @@ pub fn handleEvent(event: *xlib.XEvent, wm: *WindowManager) void {
         .expose => handleExpose(&event.xexpose, wm),
         .property_notify => handlePropertyNotify(&event.xproperty, wm),
         .mapping_notify => handleMappingNotify(&event.xmapping, wm),
+        .reparent_notify => handleReparentNotify(&event.xreparent, wm),
+        .map_notify => handleMapNotify(&event.xmap, wm),
+        .resize_request => handleResizeRequest(&event.xresizerequest, wm),
         else => {},
     }
 }
 
 fn handleMapRequest(event: *xlib.XMapRequestEvent, wm: *WindowManager) void {
     std.debug.print("map_request: window=0x{x}\n", .{event.window});
+
+    if (wm.getSystray()) |tray| {
+        if (tray.isIconWindow(event.window)) return;
+    }
 
     var window_attributes: xlib.XWindowAttributes = undefined;
     if (xlib.XGetWindowAttributes(wm.display.handle, event.window, &window_attributes) == 0) {
@@ -55,6 +62,13 @@ fn handleMapRequest(event: *xlib.XMapRequestEvent, wm: *WindowManager) void {
 }
 
 fn handleConfigureRequest(event: *xlib.XConfigureRequestEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        if (tray.handleConfigureRequest(event)) {
+            wm.invalidateBars();
+            return;
+        }
+    }
+
     const client = client_mod.windowToClient(wm.monitors, event.window);
 
     if (client) |managed_client| {
@@ -246,6 +260,13 @@ fn handleButtonPress(event: *xlib.XButtonEvent, wm: *WindowManager) void {
 }
 
 fn handleClientMessage(event: *xlib.XClientMessageEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        if (tray.handleClientMessage(event)) {
+            wm.invalidateBars();
+            return;
+        }
+    }
+
     const client = client_mod.windowToClient(wm.monitors, event.window) orelse return;
 
     if (event.message_type == wm.atoms.net_wm_state) {
@@ -275,12 +296,26 @@ fn handleClientMessage(event: *xlib.XClientMessageEvent, wm: *WindowManager) voi
 }
 
 fn handleDestroyNotify(event: *xlib.XDestroyWindowEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        if (tray.handleDestroyNotify(event.window)) {
+            wm.invalidateBars();
+            return;
+        }
+    }
+
     const client = client_mod.windowToClient(wm.monitors, event.window) orelse return;
     std.debug.print("destroy_notify: window=0x{x}\n", .{event.window});
     core.unmanage(client, wm);
 }
 
 fn handleUnmapNotify(event: *xlib.XUnmapEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        if (tray.handleUnmapNotify(event.window)) {
+            wm.invalidateBars();
+            return;
+        }
+    }
+
     const client = client_mod.windowToClient(wm.monitors, event.window) orelse return;
     std.debug.print("unmap_notify: window=0x{x}\n", .{event.window});
     core.unmanage(client, wm);
@@ -338,6 +373,13 @@ fn handlePropertyNotify(event: *xlib.XPropertyEvent, wm: *WindowManager) void {
         return;
     }
 
+    if (wm.getSystray()) |tray| {
+        if (tray.handlePropertyNotify(event)) {
+            wm.invalidateBars();
+            return;
+        }
+    }
+
     const client = client_mod.windowToClient(wm.monitors, event.window) orelse return;
 
     if (event.atom == xlib.XA_WM_TRANSIENT_FOR) {
@@ -364,9 +406,33 @@ fn handlePropertyNotify(event: *xlib.XPropertyEvent, wm: *WindowManager) void {
 
 fn handleMappingNotify(event: *xlib.XMappingEvent, wm: *WindowManager) void {
     _ = xlib.XRefreshKeyboardMapping(event);
-    
+
     if (event.request == xlib.MappingKeyboard or event.request == xlib.MappingModifier) {
         wm.ungrabKeybinds();
         wm.grabKeybinds();
+    }
+}
+
+fn handleReparentNotify(event: *xlib.XReparentEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        if (tray.handleReparentNotify(event.window, event.parent)) {
+            wm.invalidateBars();
+        }
+    }
+}
+
+fn handleMapNotify(event: *xlib.c.XMapEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        if (tray.handleMapNotify(event.window)) {
+            wm.invalidateBars();
+        }
+    }
+}
+
+fn handleResizeRequest(event: *xlib.XResizeRequestEvent, wm: *WindowManager) void {
+    if (wm.getSystray()) |tray| {
+        if (tray.handleResizeRequest(event.window, event.width, event.height)) {
+            wm.invalidateBars();
+        }
     }
 }

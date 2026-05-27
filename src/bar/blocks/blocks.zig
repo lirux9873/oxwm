@@ -110,7 +110,8 @@ pub const Block = struct {
 
         // .awake (monotonic) for interval bookkeeping, not .real (wall-clock) — std.Io rework gives us a clock enum now, and a wall-clock backstep would stretch intervals.
         const now = std.Io.Timestamp.now(io, .awake).toSeconds();
-        if (now - self.last_update < @as(i64, @intCast(interval_secs))) {
+        // last_update == 0 is the never-ran sentinel; force the first refresh since `now - 0` is just uptime under .awake and can be smaller than the interval.
+        if (self.last_update != 0 and now - self.last_update < @as(i64, @intCast(interval_secs))) {
             return false;
         }
 

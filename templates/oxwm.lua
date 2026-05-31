@@ -204,6 +204,14 @@ function oxwm.monitor.focus(dir) end
 ---@return table Action table for keybinding
 function oxwm.monitor.tag(dir) end
 
+---Warp the cursor to the focused monitor when switching monitors
+---@param enabled boolean
+function oxwm.monitor.warp_cursor(enabled) end
+
+---Warp the cursor along when sending a window to another monitor
+---@param enabled boolean
+function oxwm.monitor.warp_cursor_on_send(enabled) end
+
 ---Layout management module
 ---@class oxwm.layout
 oxwm.layout = {}

@@ -267,6 +267,11 @@ oxwm.key.bind({ modkey }, "Period", oxwm.monitor.focus(1))
 oxwm.key.bind({ modkey, "Shift" }, "Comma", oxwm.monitor.tag(-1))
 oxwm.key.bind({ modkey, "Shift" }, "Period", oxwm.monitor.tag(1))
 
+-- Warp the cursor to the focused monitor when switching monitors
+-- oxwm.monitor.warp_cursor(true)
+-- Warp the cursor along when sending a window to another monitor
+-- oxwm.monitor.warp_cursor_on_send(true)
+
 -- Workspace (tag) navigation
 -- Switch to workspace N (tags are 0-indexed, so tag "1" is index 0)
 oxwm.key.bind({ modkey }, "1", oxwm.tag.view(0))

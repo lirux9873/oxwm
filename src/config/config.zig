@@ -205,6 +205,8 @@ pub const Config = struct {
     hide_vacant_tags: bool = false,
     floating_position: FloatingPosition = .center,
     tiled_resize_mode: bool = false,
+    warp_cursor_to_monitor: bool = false,
+    warp_cursor_on_send: bool = false,
 
     layout_tile_symbol: []const u8 = "[]=",
     layout_monocle_symbol: []const u8 = "[M]",

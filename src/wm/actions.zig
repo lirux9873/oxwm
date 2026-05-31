@@ -438,6 +438,12 @@ pub fn setLayoutIndex(index: u32, wm: *WindowManager) void {
     }
 }
 
+fn warpCursorToMonitor(monitor: *Monitor, wm: *WindowManager) void {
+    const center_x = monitor.win_x + @divTrunc(monitor.win_w, 2);
+    const center_y = monitor.win_y + @divTrunc(monitor.win_h, 2);
+    _ = xlib.XWarpPointer(wm.display.handle, xlib.None, wm.display.root, 0, 0, 0, 0, center_x, center_y);
+}
+
 pub fn focusmon(direction: i32, wm: *WindowManager) void {
     const selmon = wm.selected_monitor orelse return;
     const target = monitor_mod.dirToMonitor(wm, direction) orelse return;
@@ -447,6 +453,9 @@ pub fn focusmon(direction: i32, wm: *WindowManager) void {
     core.unfocusClient(selmon.sel, false, wm);
     wm.selected_monitor = target;
     core.focus(null, wm);
+    if (wm.config.warp_cursor_to_monitor) {
+        warpCursorToMonitor(target, wm);
+    }
     std.debug.print("focusmon: monitor {d}\n", .{target.num});
 }
 
@@ -469,6 +478,10 @@ pub fn sendmon(direction: i32, wm: *WindowManager) void {
     core.focusTopClient(source_monitor, wm);
     core.arrange(source_monitor, wm);
     core.arrange(target, wm);
+
+    if (wm.config.warp_cursor_on_send) {
+        warpCursorToMonitor(target, wm);
+    }
 
     std.debug.print("sendmon: window=0x{x} to monitor {d}\n", .{ client.window, target.num });
 }

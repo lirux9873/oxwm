@@ -230,13 +230,19 @@ fn registerTagModule(state: *c.lua_State) void {
 }
 
 fn registerMonitorModule(state: *c.lua_State) void {
-    c.lua_createtable(state, 0, 2);
+    c.lua_createtable(state, 0, 4);
 
     c.lua_pushcfunction(state, luaMonitorFocus);
     c.lua_setfield(state, -2, "focus");
 
     c.lua_pushcfunction(state, luaMonitorTag);
     c.lua_setfield(state, -2, "tag");
+
+    c.lua_pushcfunction(state, luaMonitorWarpCursor);
+    c.lua_setfield(state, -2, "warp_cursor");
+
+    c.lua_pushcfunction(state, luaMonitorWarpCursorOnSend);
+    c.lua_setfield(state, -2, "warp_cursor_on_send");
 
     c.lua_setfield(state, -2, "monitor");
 }
@@ -701,6 +707,20 @@ fn luaMonitorTag(state: ?*c.lua_State) callconv(.c) c_int {
     const dir: i32 = @intCast(c.lua_tointegerx(s, 1, null));
     createActionTableWithInt(s, "TagMonitor", dir);
     return 1;
+}
+
+fn luaMonitorWarpCursor(state: ?*c.lua_State) callconv(.c) c_int {
+    const cfg = config orelse return 0;
+    const s = state orelse return 0;
+    cfg.warp_cursor_to_monitor = c.lua_toboolean(s, 1) != 0;
+    return 0;
+}
+
+fn luaMonitorWarpCursorOnSend(state: ?*c.lua_State) callconv(.c) c_int {
+    const cfg = config orelse return 0;
+    const s = state orelse return 0;
+    cfg.warp_cursor_on_send = c.lua_toboolean(s, 1) != 0;
+    return 0;
 }
 
 fn luaRuleAdd(state: ?*c.lua_State) callconv(.c) c_int {

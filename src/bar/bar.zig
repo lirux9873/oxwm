@@ -200,7 +200,7 @@ pub const Bar = struct {
         const monitor = self.monitor;
         const current_tags = monitor.tagset[monitor.sel_tags];
 
-        for (config.tags, 0..) |tag, index| {
+        for (config.tags[0..config.tag_count], 0..) |tag, index| {
             const tag_mask: u32 = @as(u32, 1) << @intCast(index);
             const is_selected = (current_tags & tag_mask) != 0;
             const is_occupied = hasClientsOnTag(monitor, tag_mask);
@@ -274,7 +274,7 @@ pub const Bar = struct {
         const monitor = self.monitor;
         const current_tags = monitor.tagset[monitor.sel_tags];
 
-        for (config.tags, 0..) |tag, index| {
+        for (config.tags[0..config.tag_count], 0..) |tag, index| {
             const tag_mask = @as(u32, 1) << @intCast(index);
             const is_selected = (current_tags & tag_mask) != 0;
             const is_occupied = hasClientsOnTag(monitor, tag_mask);

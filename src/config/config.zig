@@ -184,9 +184,10 @@ pub const Config = struct {
     terminal: []const u8 = "st",
     font: []const u8 = "monospace:size=10",
     bar_position: []const u8 = "top",
-    tags: [9][]const u8 = .{ "1", "2", "3", "4", "5", "6", "7", "8", "9" },
+    tags: [12][]const u8 = .{ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" },
+    tag_count: u32 = 9,
     layout: []const u8 = "tiling",
-    tag_layouts: [9]?[]const u8 = .{null} ** 9,
+    tag_layouts: [12]?[]const u8 = .{null} ** 12,
 
     border_width: i32 = 2,
     border_focused: u32 = 0x6dade3,

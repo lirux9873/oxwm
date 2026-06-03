@@ -42,7 +42,11 @@ local colors = {
 }
 
 -- Workspace tags - can be numbers, names, or icons (requires a Nerd Font)
+-- The number of tags is deduced from the size of this table (up to a max of 12).
+-- The default is 9. To use more, add entries here and uncomment the matching
+-- keybinds for tags 10-12 further down in this file.
 local tags = { "1", "2", "3", "4", "5", "6", "7", "8", "9" }
+-- local tags = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" } -- Example of 12 tags
 -- local tags = { "", "󰊯", "", "", "󰙯", "󱇤", "", "󱘶", "󰧮" } -- Example of nerd font icon tags
 
 -- Font for the status bar (use "fc-list" to see available fonts)
@@ -142,7 +146,7 @@ oxwm.border.set_unfocused_color(colors.grey)
 oxwm.set_floating_position("center")
 
 -- Smart Enabled = No border if 1 window
-oxwm.gaps.set_smart(enabled)
+oxwm.gaps.set_smart(true)
 -- Inner gaps (horizontal, vertical) in pixels
 oxwm.gaps.set_inner(5, 5)
 -- Outer gaps (horizontal, vertical) in pixels
@@ -283,6 +287,10 @@ oxwm.key.bind({ modkey }, "6", oxwm.tag.view(5))
 oxwm.key.bind({ modkey }, "7", oxwm.tag.view(6))
 oxwm.key.bind({ modkey }, "8", oxwm.tag.view(7))
 oxwm.key.bind({ modkey }, "9", oxwm.tag.view(8))
+-- Tags 10-12 (opt-in): set 12 tags above, then pick keys you like and uncomment.
+-- oxwm.key.bind({ modkey }, "0", oxwm.tag.view(9))
+-- oxwm.key.bind({ modkey }, "minus", oxwm.tag.view(10))
+-- oxwm.key.bind({ modkey }, "equal", oxwm.tag.view(11))
 
 -- Move focused window to workspace N
 oxwm.key.bind({ modkey, "Shift" }, "1", oxwm.tag.move_to(0))
@@ -294,6 +302,9 @@ oxwm.key.bind({ modkey, "Shift" }, "6", oxwm.tag.move_to(5))
 oxwm.key.bind({ modkey, "Shift" }, "7", oxwm.tag.move_to(6))
 oxwm.key.bind({ modkey, "Shift" }, "8", oxwm.tag.move_to(7))
 oxwm.key.bind({ modkey, "Shift" }, "9", oxwm.tag.move_to(8))
+-- oxwm.key.bind({ modkey, "Shift" }, "0", oxwm.tag.move_to(9))
+-- oxwm.key.bind({ modkey, "Shift" }, "minus", oxwm.tag.move_to(10))
+-- oxwm.key.bind({ modkey, "Shift" }, "equal", oxwm.tag.move_to(11))
 
 -- Combo view (view multiple tags at once) {argos_nothing}
 -- Example: Mod+Ctrl+2 while on tag 1 will show BOTH tags 1 and 2
@@ -306,6 +317,9 @@ oxwm.key.bind({ modkey, "Control" }, "6", oxwm.tag.toggleview(5))
 oxwm.key.bind({ modkey, "Control" }, "7", oxwm.tag.toggleview(6))
 oxwm.key.bind({ modkey, "Control" }, "8", oxwm.tag.toggleview(7))
 oxwm.key.bind({ modkey, "Control" }, "9", oxwm.tag.toggleview(8))
+-- oxwm.key.bind({ modkey, "Control" }, "0", oxwm.tag.toggleview(9))
+-- oxwm.key.bind({ modkey, "Control" }, "minus", oxwm.tag.toggleview(10))
+-- oxwm.key.bind({ modkey, "Control" }, "equal", oxwm.tag.toggleview(11))
 
 -- Multi tag (window on multiple tags)
 -- Example: Mod+Ctrl+Shift+2 puts focused window on BOTH current tag and tag 2
@@ -318,6 +332,9 @@ oxwm.key.bind({ modkey, "Control", "Shift" }, "6", oxwm.tag.toggletag(5))
 oxwm.key.bind({ modkey, "Control", "Shift" }, "7", oxwm.tag.toggletag(6))
 oxwm.key.bind({ modkey, "Control", "Shift" }, "8", oxwm.tag.toggletag(7))
 oxwm.key.bind({ modkey, "Control", "Shift" }, "9", oxwm.tag.toggletag(8))
+-- oxwm.key.bind({ modkey, "Control", "Shift" }, "0", oxwm.tag.toggletag(9))
+-- oxwm.key.bind({ modkey, "Control", "Shift" }, "minus", oxwm.tag.toggletag(10))
+-- oxwm.key.bind({ modkey, "Control", "Shift" }, "equal", oxwm.tag.toggletag(11))
 
 -------------------------------------------------------------------------------
 -- Advanced: Keychords

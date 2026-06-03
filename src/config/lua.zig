@@ -1124,13 +1124,15 @@ fn luaSetTags(state: ?*c.lua_State) callconv(.c) c_int {
 
     const len = c.lua_rawlen(s, 1);
     var i: usize = 0;
-    while (i < len and i < 9) : (i += 1) {
+    while (i < len and i < 12) : (i += 1) {
         _ = c.lua_rawgeti(s, 1, @intCast(i + 1));
         if (dupeLuaString(s, -1)) |tag_str| {
             cfg.tags[i] = tag_str;
         }
         c.lua_settop(s, -2);
     }
+
+    if (i > 0) cfg.tag_count = @intCast(i);
 
     return 0;
 }
@@ -1180,7 +1182,7 @@ fn luaSetTagLayout(state: ?*c.lua_State) callconv(.c) c_int {
     const cfg = config orelse return 0;
     const s = state orelse return 0;
     const tag_index = c.lua_tointegerx(s, 1, null);
-    if (tag_index < 1 or tag_index > 9) return 0;
+    if (tag_index < 1 or tag_index > 12) return 0;
     const name = getStringArg(s, 2) orelse return 0;
     if (config_mod.Layouts.fromString(name) == null) {
         std.debug.print("set_tag_layout: unknown layout '{s}'\n", .{name});

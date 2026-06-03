@@ -149,7 +149,7 @@ pub fn toggleView(tag_mask: u32, wm: *WindowManager) void {
         if ((new_tags & (@as(u32, 1) << @intCast(monitor.pertag.curtag -| 1))) == 0) {
             monitor.pertag.prevtag = monitor.pertag.curtag;
             var i: u32 = 0;
-            while (i < 9) : (i += 1) {
+            while (i < wm.config.tag_count) : (i += 1) {
                 if ((new_tags & (@as(u32, 1) << @intCast(i))) != 0) break;
             }
             monitor.pertag.curtag = i + 1;
@@ -250,11 +250,12 @@ pub fn toggleFullscreen(wm: *WindowManager) void {
 pub fn viewAdjacentTag(direction: i32, wm: *WindowManager) void {
     const monitor = wm.selected_monitor orelse return;
     const current_tag = monitor.pertag.curtag;
+    const max_tag: i32 = @intCast(wm.config.tag_count);
     var new_tag: i32 = @intCast(current_tag);
 
     new_tag += direction;
-    if (new_tag < 1) new_tag = 9;
-    if (new_tag > 9) new_tag = 1;
+    if (new_tag < 1) new_tag = max_tag;
+    if (new_tag > max_tag) new_tag = 1;
 
     const tag_mask: u32 = @as(u32, 1) << @intCast(new_tag - 1);
     core.view(tag_mask, wm);
@@ -263,13 +264,14 @@ pub fn viewAdjacentTag(direction: i32, wm: *WindowManager) void {
 pub fn viewAdjacentNonemptyTag(direction: i32, wm: *WindowManager) void {
     const monitor = wm.selected_monitor orelse return;
     const current_tag = monitor.pertag.curtag;
+    const max_tag: i32 = @intCast(wm.config.tag_count);
     var new_tag: i32 = @intCast(current_tag);
 
     var attempts: i32 = 0;
-    while (attempts < 9) : (attempts += 1) {
+    while (attempts < max_tag) : (attempts += 1) {
         new_tag += direction;
-        if (new_tag < 1) new_tag = 9;
-        if (new_tag > 9) new_tag = 1;
+        if (new_tag < 1) new_tag = max_tag;
+        if (new_tag > max_tag) new_tag = 1;
 
         const tag_mask: u32 = @as(u32, 1) << @intCast(new_tag - 1);
         if (core.hasClientsOnTag(monitor, tag_mask)) {

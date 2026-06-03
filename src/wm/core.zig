@@ -745,7 +745,7 @@ pub fn view(tag_mask: u32, wm: *WindowManager) void {
             monitor.pertag.curtag = 0;
         } else {
             var i: u32 = 0;
-            while (i < 9) : (i += 1) {
+            while (i < wm.config.tag_count) : (i += 1) {
                 if ((tag_mask & (@as(u32, 1) << @intCast(i))) != 0) break;
             }
             monitor.pertag.curtag = i + 1;

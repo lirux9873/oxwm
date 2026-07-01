@@ -27,7 +27,7 @@ pub fn build(b: *std.Build) void {
 
     exe.use_lld = false;
 
-    # FreeBSD only
+    // FreeBSD only
     exe.root_module.addIncludePath(.{ .cwd_relative = "/usr/local/include/freetype2" });
 
     const lua = buildLua(b, lua_dep, target, optimize);
